@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magical Animated Portfolio</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        #cloud-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .cloud {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+
+        #touch-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
+            text-align: center;
+            opacity: 0.1;
+            transition: opacity 1s ease;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        h1, h2 {
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 30px;
+            animation: colorChange 5s infinite;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff;
+        }
+
+        h2 {
+            font-size: 2em;
+        }
+
+        @keyframes colorChange {
+            0% { color: #ff0000; }
+            25% { color: #00ff00; }
+            50% { color: #0000ff; }
+            75% { color: #ffff00; }
+            100% { color: #ff0000; }
+        }
+
+        .portfolio-item, .skill-item, .internship-item, .project-item, .certification-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .portfolio-item.show, .skill-item.show, .internship-item.show, .project-item.show, .certification-item.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .portfolio-item:hover, .skill-item:hover, .internship-item:hover, .project-item:hover, .certification-item:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .portfolio-item h2, .skill-item h3, .internship-item h3, .project-item h3, .certification-item h3 {
+            margin-top: 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            animation: float 5s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .glitter {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: #fff;
+            border-radius: 50%;
+            opacity: 0;
+            animation: glitter 2s infinite;
+        }
+
+        @keyframes glitter {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1) rotate(180deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        .star {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 10px solid #fff;
+            animation: twinkle 1s infinite alternate;
+        }
+
+        .star:after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: -5px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 10px solid #fff;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: #fff;
+            animation: shootingStar 2s linear infinite;
+        }
+
+        @keyframes shootingStar {
+            0% { transform: translateX(0) translateY(0); opacity: 1; }
+            100% { transform: translateX(300px) translateY(300px); opacity: 0; }
+        }
+
+        .glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .portfolio-item:hover .glow, .skill-item:hover .glow, .internship-item:hover .glow, .project-item:hover .glow, .certification-item:hover .glow {
+            opacity: 1;
+            animation: pulse 2s infinite;
+        }
+
+        .rainbow-text {
+            background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: rainbow 5s linear infinite;
+        }
+
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: sparkle 1s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .about-me {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .name-border {
+            display: inline-block;
+            padding: 20px;
+            border: 5px solid transparent;
+            border-image: linear-gradient(45deg, #ff0000, #00ff00, #0000ff, #ffff00);
+            border-image-slice: 1;
+            animation: borderAnimation 5s linear infinite;
+        }
+
+        @keyframes borderAnimation {
+            0% { border-image-source: linear-gradient(45deg, #ff0000, #00ff00, #0000ff, #ffff00); }
+            25% { border-image-source: linear-gradient(45deg, #ffff00, #ff0000, #00ff00, #0000ff); }
+            50% { border-image-source: linear-gradient(45deg, #0000ff, #ffff00, #ff0000, #00ff00); }
+            75% { border-image-source: linear-gradient(45deg, #00ff00, #0000ff, #ffff00, #ff0000); }
+            100% { border-image-source: linear-gradient(45deg, #ff0000, #00ff00, #0000ff, #ffff00); }
+        }
+
+        .social-icons {
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            display: inline-block;
+            margin: 0 10px;
+            color: Gold;
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            transform: scale(1.2);
+        }
+
+        .skills-container, .internships-container, .projects-container, .certifications-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .skill-item, .internship-item, .project-item, .certification-item {
+            width: calc(33.33% - 40px);
+            margin: 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .skill-item:hover, .internship-item:hover, .project-item:hover, .certification-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .rainbow-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+        }
+
+        .rainbow-nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .rainbow-nav a:nth-child(1) { background: linear-gradient(45deg, #ff0000, #ff7f00); }
+        .rainbow-nav a:nth-child(2) { background: linear-gradient(45deg, #ff7f00, #ffff00); }
+        .rainbow-nav a:nth-child(3) { background: linear-gradient(45deg, #ffff00, #00ff00); }
+        .rainbow-nav a:nth-child(4) { background: linear-gradient(45deg, #00ff00, #0000ff); }
+        .rainbow-nav a:nth-child(5) { background: linear-gradient(45deg, #0000ff, #8b00ff); }
+
+        .rainbow-nav a:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .view-demo {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .view-demo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* New styles for footer animations */
+        @keyframes footerGlow {
+            0% { box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff; }
+            50% { box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff; }
+            100% { box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff; }
+        }
+
+        footer {
+            animation: footerGlow 3s infinite;
+        }
+
+        /* Enhanced styles for view-demo buttons */
+        .view-demo {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .view-demo::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+            transform: rotate(45deg);
+            animation: shineEffect 3s infinite;
+        }
+
+        @keyframes shineEffect {
+            0% { left: -50%; top: -50%; }
+            100% { left: 150%; top: 150%; }
+        }
+
+        /* New styles for internship and certification demo buttons */
+        .internship-item .view-demo,
+        .certification-item .view-demo {
+            animation: pulseGrow 2s infinite;
+        }
+
+        @keyframes pulseGrow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* New styles for GitHub links */
+        .github-link {
+            display: inline-block;
+            margin-top: 10px;
+            margin-right: 10px;
+            padding: 5px 10px;
+            background: linear-gradient(45deg, #333, #666);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .github-link:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="cloud-container"></div>
+    <div id="touch-prompt">Touch anywhere to reveal the magic</div>
+    <div class="container">
+        <h1 class="rainbow-text">My Enchanted Portfolio</h1>
+         <section class="about-me">
+            <div class="name-border">
+                <h2>Diwakaran R</h2>
+            </div>
+            <div class="social-icons">
+                <a href="mailto:diwakaranrukmangathan@gmail.com" target="_blank"><i class="fas fa-envelope"></i></a>
+                <a href="https://www.linkedin.com/in/diwakaran-r-876642326" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="https://github.com/DIWAKARANR" target="_blank"><i class="fab fa-github"></i></a>
+            </div>
+        </section>
+
+        <nav class="rainbow-nav">
+            <a href="#skills">Skills</a>
+            <a href="#internships">Internships</a>
+            <a href="#projects">Projects</a>
+            <a href="#certifications">Certifications</a>
+            <a href="#contact">Contact</a>
+        </nav>
+
+        <h2 id="skills">Skills</h2>
+        <div class="skills-container">
+            <div class="skill-item">
+                <h3>Web Development</h3>
+                <p>Completed web development course at SoloLearn, gaining proficiency in HTML, CSS, and JavaScript.</p>
+                <div class="glow"></div>
+            </div>
+            <div class="skill-item">
+                <h3>Artificial Intelligence</h3>
+                <p>Certified as Oracle AI Foundation Associate after completing the Artificial Intelligence course at Oracle.</p>
+                <div class="glow"></div>
+            </div>
+            <div class="skill-item">
+                <h3>Machine Learning</h3>
+                <p>Completed Machine Learning with Python course at IBM, gaining expertise in machine learning and its algorithms.</p>
+                <div class="glow"></div>
+            </div>
+        </div>
+
+        <h2 id="internships">Internships</h2>
+        <div class="internships-container">
+            <div class="internship-item">
+                <h3>AI/ML Internship at YBI - Remote</h3>
+                <p>I completed a 1-month virtual AI/ML internship at YBI Foundation, working on projects such as Handwritten Digit Prediction and Financial Market News Sentiment Analysis.</p>
+                <a href=" https://drive.google.com/file/d/1Lj_vYaA9mTf4JJVBwzrxtKdF79TKuLzH/view?usp=drivesdk" class="view-demo" target="_blank">View My Internship Certificate</a>
+                <div class="glow"></div>
+            </div>
+            <div class="internship-item">
+                <h3>Web Development Internship at PRODIGYINFOTECH - Remote</h3>
+                <p>I completed a web development internship at Prodigyinfotech, working on projects like a landing page, portfolio website, Tic-Tac-Toe application, and stopwatch application, and received a letter of recommendation validating my skills.</p>
+                <a href=" https://drive.google.com/file/d/1eouXdZ5TMZztgYJsZFEf1PFErluWCIow/view?usp=drivesdk" class="view-demo" target="_blank">View My Internship Certificate</a>
+                <div class="glow"></div>
+            </div>
+            <div class="internship-item">
+                <h3>Web Development Internship at CODSOFT - Remote</h3>
+                <p>I completed a web development internship at CODSOFT, working on projects such as a crescent-shaped calculator, portfolio, and student hub landing page.</p>
+                <a href="https://drive.google.com/file/d/1-n-OpWo4o1rKx7lGg-XeuCwx4tayvDXY/view?pli=1 " class="view-demo" target="_blank">View My Internship Certificate</a>
+                <div class="glow"></div>
+            </div>
+        </div>
+
+        <h2 id="projects">Projects</h2>
+        <div class="projects-container">
+            <div class="project-item">
+                <h3>Countdown Timer</h3>
+                <p>I developed an advanced customizable animated countdown timer with dynamic visual effects, including a gradient background, shaking animation, and progress ring, using HTML, CSS, and JavaScript.</p>
+                <a href=" https://diwakaranr.github.io/TECHNOHACKSEdutech-Count-down-timer-/" class="github-link" target="_blank">View on GitHub</a>
+                <a href="#" class="view-demo">View Demo</a>
+                <div class="glow"></div>
+            </div>
+            <div class="project-item">
+                <h3>Registration Form</h3>
+                <p>I created a visually enhanced registration form with animated background bubbles, dynamic gradients, and form validation for username, email, and password fields using HTML, CSS, and JavaScript.</p>
+                <a href=" https://diwakaranr.github.io/Techno-Hacks-Edu-Tech-Registration-form-/" class="github-link" target="_blank">View on GitHub</a>
+                <a href="#" class="view-demo">View Demo</a>
+                <div class="glow"></div>
+            </div>
+            <div class="project-item">
+                <h3>Currency Converter</h3>
+                <p>I built a colorful and animated currency converter web application with gradient backgrounds, animated buttons, and a rain effect, converting amounts between USD, EUR, and INR using HTML, CSS, and JavaScript.</p>
+                <a href=" https://diwakaranr.github.io/TECHNOHACKSEdutech-Currency-converter-/" class="github-link" target="_blank">View on GitHub</a>
+                <a href="#" class="view-demo">View Demo</a>
+                <div class="glow"></div>
+            </div>
+        </div>
+
+        <h2 id="certifications">Certifications</h2>
+        <div class="certifications-container">
+            <div class="certification-item">
+                <h3>ORACLE AI FOUNDATION ASSOCIATE - ORACLE</h3>
+                <p>I completed the Oracle AI Foundation Associate certification at Oracle Cloud Infrastructure, gaining foundational knowledge in artificial intelligence.</p>
+                <a href=" https://catalog-education.oracle.com/pls/certview/sharebadge?id=E8D5D58372C3D73FBEEC5CBF8D9B7E56FE1E76968A4FEA7AEC8DADBDF9CB9910" class="view-demo" target="_blank">View My Certificate</a>
+                <div class="glow"></div>
+            </div>
+            <div class="certification-item">
+                <h3>MACHINE LEARNING WITH PYTHON - IBM</h3>
+                <p>I completed the Machine Learning with Python course at IBM, gaining foundational skills in machine learning and machine learning algorithms.</p>
+                <a href=" https://www.credly.com/badges/8cec9608-2d93-4833-9101-e8d4e6cfefc6" class="view-demo" target="_blank">View My Certificate</a>
+                <div class="glow"></div>
+            </div>
+            <div class="certification-item">
+                <h3>PYTHON ESSENTIALS - CISCO</h3>
+                <p>I completed the Python Essentials course at Cisco, gaining basic knowledge in Python and earning a verified badge.</p>
+                <a href="https://www.credly.com/badges/bfcb38c6-b0e0-40b2-be55-9c2e71fe2fd3 " class="view-demo" target="_blank">View My Certificate</a>
+                <div class="glow"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="contact">
+        <div class="social-icons">
+            <a href="mailto:diwakaranrukmangathan@gmail.com" target="_blank"><i class="fas fa-envelope"></i></a>
+            <a href="https://www.linkedin.com/in/diwakaran-r-876642326" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/DIWAKARANR" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+                <p>&copy; 2024 DIWAKARAN R. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const cloudContainer = document.getElementById('cloud-container');
+        const touchPrompt = document.getElementById('touch-prompt');
+        const container = document.querySelector('.container');
+        const portfolioItems = document.querySelectorAll('.portfolio-item, .skill-item, .internship-item, .project-item, .certification-item');
+        let isRevealed = false;
+        let isTextRevealed = false;
+
+        function createClouds() {
+            for (let i = 0; i < 20; i++) {
+                const cloud = document.createElement('div');
+                cloud.classList.add('cloud');
+                cloud.style.width = `${Math.random() * 200 + 100}px`;
+                cloud.style.height = cloud.style.width;
+                cloud.style.left = `${Math.random() * 100}%`;
+                cloud.style.top = `${Math.random() * 100}%`;
+                cloudContainer.appendChild(cloud);
+            }
+        }
+
+        function revealText(e) {
+            if (!isTextRevealed) {
+                const rect = touchPrompt.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const radialGradient = `radial-gradient(circle at ${x}px ${y}px, transparent 0%, rgba(255,255,255,0.7) 25%, transparent 50%)`;
+                touchPrompt.style.backgroundImage = radialGradient;
+                touchPrompt.style.opacity = '1';
+                touchPrompt.style.webkitBackgroundClip = 'text';
+                touchPrompt.style.webkitTextFillColor = 'transparent';
+            }
+        }
+
+        function revealMagic() {
+            if (isTextRevealed && !isRevealed) {
+                isRevealed = true;
+                cloudContainer.style.display = 'none';
+                touchPrompt.style.display = 'none';
+                container.style.opacity = '1';
+                createBubbles();
+                createGlitter();
+                createStars();
+                createShootingStars();
+                createSparkles();
+                portfolioItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add('show');
+                    }, index * 200);
+                });
+                createFooterAnimation();
+                enhanceViewDemoButtons();
+            }
+        }
+
+        function handleInteraction(e) {
+            if (!isTextRevealed) {
+                revealText(e);
+                isTextRevealed = true;
+            } else {
+                revealMagic();
+            }
+        }
+
+        function createBubbles() {
+            const bubbleCount = 30;
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                bubble.style.width = `${Math.random() * 50 + 10}px`;
+                bubble.style.height = bubble.style.width;
+                bubble.style.left = `${Math.random() * 100}vw`;
+                bubble.style.top = `${Math.random() * 100}vh`;
+                bubble.style.animationDuration = `${Math.random() * 5 + 5}s`;
+                document.body.appendChild(bubble);
+            }
+        }
+
+        function createGlitter() {
+            const glitterCount = 150;
+            for (let i = 0; i < glitterCount; i++) {
+                const glitter = document.createElement('div');
+                glitter.classList.add('glitter');
+                glitter.style.left = `${Math.random() * 100}vw`;
+                glitter.style.top = `${Math.random() * 100}vh`;
+                glitter.style.animationDelay = `${Math.random() * 2}s`;
+                document.body.appendChild(glitter);
+            }
+        }
+
+        function createStars() {
+            const starCount = 50;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                document.body.appendChild(star);
+            }
+        }
+
+        function createShootingStars() {
+            const shootingStarCount = 20;
+            for (let i = 0; i < shootingStarCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('shooting-star');
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                document.body.appendChild(star);
+            }
+        }
+
+        function createSparkles() {
+            const sparkleCount = 100;
+            for (let i = 0; i < sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.classList.add('sparkle');
+                sparkle.style.left = `${Math.random() * 100}vw`;
+                sparkle.style.top = `${Math.random() * 100}vh`;
+                sparkle.style.animationDelay = `${Math.random() * 5}s`;
+                document.body.appendChild(sparkle);
+            }
+        }
+
+        function createFooterAnimation() {
+            const footer = document.querySelector('footer');
+            footer.style.transition = 'transform 0.3s ease';
+            footer.addEventListener('mouseenter', () => {
+                footer.style.transform = 'scale(1.05)';
+            });
+            footer.addEventListener('mouseleave', () => {
+                footer.style.transform = 'scale(1)';
+            });
+        }
+
+        function enhanceViewDemoButtons() {
+            const viewDemoButtons = document.querySelectorAll('.view-demo');
+            viewDemoButtons.forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    button.style.transform = 'rotate(5deg)';
+                });
+                button.addEventListener('mouseleave', () => {
+                    button.style.transform = 'rotate(0deg)';
+                });
+            });
+        }
+
+        createClouds();
+        document.addEventListener('click', handleInteraction);
+        document.addEventListener('touchstart', handleInteraction);
+    </script>
+</body>
+</html>
